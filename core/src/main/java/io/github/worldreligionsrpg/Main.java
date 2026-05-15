@@ -1,5 +1,6 @@
 package io.github.worldreligionsrpg;
 
+import com.badlogic.ashley.core.Engine;
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;

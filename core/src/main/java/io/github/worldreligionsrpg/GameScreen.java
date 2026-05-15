@@ -1,14 +1,18 @@
 package io.github.worldreligionsrpg;
 
+import com.badlogic.ashley.core.Engine;
+import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import io.github.worldreligionsrpg.asset.AssetService;
 import io.github.worldreligionsrpg.asset.MapAsset;
+import io.github.worldreligionsrpg.system.RenderSystem;
 
 import static io.github.worldreligionsrpg.Constants.WorldConstants.UNIT_SCALE;
 
@@ -18,8 +22,7 @@ public class GameScreen extends ScreenAdapter {
     private final AssetService assetService;
     private final Viewport viewport;
     private final OrthographicCamera camera;
-
-    private final OrthogonalTiledMapRenderer mapRenderer;
+    private final Engine engine;
 
     public GameScreen(Main game){
         this.game = game;
@@ -27,25 +30,40 @@ public class GameScreen extends ScreenAdapter {
         this.viewport = game.getViewport();
         this.camera = game.getCamera();
         this.batch = game.getBatch();
-        this.mapRenderer = new OrthogonalTiledMapRenderer(null, UNIT_SCALE, this.batch);
+        this.engine = new Engine();
+
+        this.engine.addSystem(new RenderSystem(this.batch, this.viewport));
     }
 
     @Override
     public void show(){
         this.assetService.load(MapAsset.MAIN);
-        this.mapRenderer.setMap(this.assetService.get(MapAsset.MAIN));
+        this.engine.getSystem(RenderSystem.class).setMap(this.assetService.get(MapAsset.MAIN));
     }
 
     @Override
+    public void hide(){
+        this.engine.removeAllEntities();
+    }
+
+/**     this delta time is the time that has been passed between two frames
+        without this the player may go through a wall since the collision checker
+        is behind that's why the delta time is clamped to a very low number */
+    @Override
     public void render(float delta){
-        this.viewport.apply();
-        this.batch.setColor(Color.WHITE);
-        this.mapRenderer.setView(this.camera);
-        this.mapRenderer.render();
+        delta = Math.min(delta, 1f / 30f);
+        this.engine.update(delta);
+
     }
 
     @Override
     public void dispose(){
-        this.mapRenderer.dispose();
+        for (EntitySystem system : this.engine.getSystems()){
+            if (system instanceof Disposable disposableSystem){
+                disposableSystem.dispose();
+            }
+        }
+
+
     }
 }
