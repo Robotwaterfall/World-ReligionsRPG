@@ -19,15 +19,13 @@ public class Transform implements Component, Comparable<Transform> {
         int z,
         Vector2 size,
         Vector2 scaling,
-        float rotationDeg,
-        float sortOffsetY
+        float rotationDeg
     ) {
         this.position = position;
         this.z = z;
         this.size = size;
         this.scaling = scaling;
         this.rotationDeg = rotationDeg;
-        this.sortOffsetY = sortOffsetY;
     }
 
     @Override

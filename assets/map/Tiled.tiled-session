@@ -1,4 +1,5 @@
 {
+    "activeFile": "../maps/main.tmx",
     "expandedProjectPaths": [
     ],
     "fileStates": {
@@ -6,8 +7,8 @@
             "scale": 2,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 253.5,
-                "y": 164.25
+                "x": 251,
+                "y": 147.75
             }
         },
         "../maps/tileset.tsx": {
@@ -26,6 +27,7 @@
         "../maps/tileset.tsx",
         "C:/Programming/WorldReligionsRPG/assets/objects/objects.tsx"
     ],
+    "project": "",
     "recentFiles": [
         "C:/Programming/WorldReligionsRPG/assets/objects/objects.tsx",
         "../maps/tileset.tsx",

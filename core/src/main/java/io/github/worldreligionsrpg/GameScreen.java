@@ -7,12 +7,17 @@ import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import io.github.worldreligionsrpg.asset.AssetService;
 import io.github.worldreligionsrpg.asset.MapAsset;
 import io.github.worldreligionsrpg.system.RenderSystem;
+import io.github.worldreligionsrpg.tiled.TiledAshleyConfigurator;
+import io.github.worldreligionsrpg.tiled.TiledService;
+
+import java.util.function.Consumer;
 
 import static io.github.worldreligionsrpg.Constants.WorldConstants.UNIT_SCALE;
 
@@ -23,6 +28,8 @@ public class GameScreen extends ScreenAdapter {
     private final Viewport viewport;
     private final OrthographicCamera camera;
     private final Engine engine;
+    private final TiledService tiledService;
+    private final TiledAshleyConfigurator ashleyConfigurator;
 
     public GameScreen(Main game){
         this.game = game;
@@ -30,15 +37,21 @@ public class GameScreen extends ScreenAdapter {
         this.viewport = game.getViewport();
         this.camera = game.getCamera();
         this.batch = game.getBatch();
+        this.tiledService = new TiledService(this.assetService);
         this.engine = new Engine();
+        this.ashleyConfigurator = new TiledAshleyConfigurator(this.engine, this.assetService);
 
-        this.engine.addSystem(new RenderSystem(this.batch, this.viewport));
+        this.engine.addSystem(new RenderSystem(this.batch, this.viewport, this.camera));
     }
 
     @Override
     public void show(){
-        this.assetService.load(MapAsset.MAIN);
-        this.engine.getSystem(RenderSystem.class).setMap(this.assetService.get(MapAsset.MAIN));
+        Consumer<TiledMap> renderConsumer = this.engine.getSystem(RenderSystem.class)::setMap;
+        this.tiledService.setMapChangerConsumer(renderConsumer);
+        this.tiledService.setLoadObjectConsumer(this.ashleyConfigurator::onLoadObject);
+
+        TiledMap tiledMap = this.tiledService.loadMap(MapAsset.MAIN);
+        this.tiledService.setMap(tiledMap);
     }
 
     @Override

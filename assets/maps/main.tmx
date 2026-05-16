@@ -18,7 +18,7 @@
   <object id="3" name="Dummy" gid="193" x="102.5" y="200.5" width="32" height="32"/>
   <object id="4" name="Dummy" gid="193" x="102" y="130" width="32" height="32"/>
   <object id="5" name="Dummy" gid="193" x="101.5" y="167.5" width="32" height="32"/>
-  <object id="6" name="Player" gid="197" x="266.5" y="215.5" width="32" height="32"/>
+  <object id="6" name="Player" gid="197" x="260" y="195" width="32" height="32"/>
   <object id="13" gid="196" x="135.5" y="252" width="41" height="63"/>
   <object id="14" gid="196" x="76" y="257.5" width="41" height="63"/>
   <object id="15" gid="196" x="344" y="67.5" width="41" height="63"/>
@@ -31,7 +31,7 @@
   <object id="23" gid="196" x="439" y="76.5" width="41" height="63"/>
   <object id="24" gid="196" x="411" y="45.5" width="41" height="63"/>
   <object id="25" gid="196" x="448.5" y="42.5" width="41" height="63"/>
-  <object id="26" gid="196" x="327" y="46.5" width="41" height="63"/>
+  <object id="26" gid="196" x="333.5" y="45.5" width="41" height="63"/>
   <object id="27" gid="196" x="460.5" y="109" width="41" height="63"/>
  </objectgroup>
 </map>
