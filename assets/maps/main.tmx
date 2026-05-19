@@ -20,6 +20,8 @@
   <object id="5" name="Dummy" gid="193" x="101.5" y="167.5" width="32" height="32"/>
   <object id="6" name="Player" gid="197" x="110.506" y="227.383" width="32" height="32">
    <properties>
+    <property name="animation" value="IDLE"/>
+    <property name="animationSpeed" type="float" value="1"/>
     <property name="speed" type="float" value="4"/>
    </properties>
   </object>
