@@ -7,8 +7,10 @@ import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.maps.tiled.tiles.AnimatedTiledMapTile;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -17,7 +19,9 @@ import io.github.worldreligionsrpg.asset.MapAsset;
 import io.github.worldreligionsrpg.component.Graphic;
 import io.github.worldreligionsrpg.component.Transform;
 
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 
 import static io.github.worldreligionsrpg.Constants.WorldConstants.UNIT_SCALE;
 
@@ -27,6 +31,8 @@ public class RenderSystem extends SortedIteratingSystem implements Disposable {
     private final Batch batch;
     private final Viewport viewport;
     private final OrthographicCamera camera;
+    private final List<MapLayer> bgLayers;
+    private final List<MapLayer> frgLayers;
 
     public RenderSystem(Batch batch, Viewport viewport, OrthographicCamera camera) {
         super(
@@ -37,18 +43,25 @@ public class RenderSystem extends SortedIteratingSystem implements Disposable {
         this.viewport = viewport;
         this.camera = camera;
         this.mapRenderer = new OrthogonalTiledMapRenderer(null, UNIT_SCALE, this.batch);
+        this.bgLayers = new ArrayList<>();
+        this.frgLayers = new ArrayList<>();
     }
 
     @Override
     public void update(float deltaTime){
+        AnimatedTiledMapTile.updateAnimationBaseTime();
         this.viewport.apply();
+
+        batch.begin();
         this.batch.setColor(Color.WHITE);
         this.mapRenderer.setView(this.camera);
-        this.mapRenderer.render();
+        bgLayers.forEach(mapRenderer::renderMapLayer);
 
         forceSort();
-        batch.begin();
         super.update(deltaTime);
+
+        this.batch.setColor(Color.WHITE);
+        frgLayers.forEach(mapRenderer::renderMapLayer);
         batch.end();
     }
 
@@ -78,7 +91,23 @@ public class RenderSystem extends SortedIteratingSystem implements Disposable {
 
     public void setMap(TiledMap tiledMap){
         this.mapRenderer.setMap(tiledMap);
+
+        this.frgLayers.clear();
+        this.bgLayers.clear();
+        List<MapLayer> currentLayers = bgLayers;
+        for(MapLayer layer : tiledMap.getLayers()){
+            if("objects".equals(layer.getName())){
+            currentLayers = bgLayers;
+            continue;
+
+        }
+        if(layer.getClass().equals(MapLayer.class)){
+            continue;
+        }
+
+        currentLayers.add(layer);
     }
+        }
 
     @Override
     public void dispose(){

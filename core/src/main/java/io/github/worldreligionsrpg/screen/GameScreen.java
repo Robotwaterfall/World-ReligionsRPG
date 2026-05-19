@@ -1,16 +1,14 @@
-package io.github.worldreligionsrpg;
+package io.github.worldreligionsrpg.screen;
 
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.EntitySystem;
-import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.ScreenAdapter;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import io.github.worldreligionsrpg.Main;
 import io.github.worldreligionsrpg.asset.AssetService;
 import io.github.worldreligionsrpg.asset.MapAsset;
 import io.github.worldreligionsrpg.system.RenderSystem;
@@ -18,8 +16,6 @@ import io.github.worldreligionsrpg.tiled.TiledAshleyConfigurator;
 import io.github.worldreligionsrpg.tiled.TiledService;
 
 import java.util.function.Consumer;
-
-import static io.github.worldreligionsrpg.Constants.WorldConstants.UNIT_SCALE;
 
 public class GameScreen extends ScreenAdapter {
     private final Main game;

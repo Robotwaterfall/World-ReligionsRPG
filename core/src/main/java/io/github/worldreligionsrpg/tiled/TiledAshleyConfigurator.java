@@ -3,11 +3,14 @@ package io.github.worldreligionsrpg.tiled;
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.FileTextureData;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.objects.TiledMapTileMapObject;
 import com.badlogic.gdx.math.Vector2;
 import io.github.worldreligionsrpg.asset.AssetService;
+import io.github.worldreligionsrpg.asset.AtlasAsset;
 import io.github.worldreligionsrpg.component.Graphic;
 import io.github.worldreligionsrpg.component.Transform;
 
@@ -58,6 +61,17 @@ public class TiledAshleyConfigurator {
 
 
     private TextureRegion getTextureRegion(TiledMapTile tile){
+        String atlasAssetStr = tile.getProperties().get("atlasAsset", AtlasAsset.OBJECTS.name(), String.class);
+        AtlasAsset atlasAsset = AtlasAsset.valueOf(atlasAssetStr);
+        TextureAtlas textureAtlas = this.assetService.get(atlasAsset);
+        FileTextureData textureData = (FileTextureData) tile.getTextureRegion().getTexture().getTextureData();
+        String atlasKey = textureData.getFileHandle().nameWithoutExtension();
+        TextureAtlas.AtlasRegion region = textureAtlas.findRegion(atlasKey + "/" + atlasKey);
+        if(region != null){
+            return region;
+        }
+
+        //Otherwise region wasn't found so render at least something
         return tile.getTextureRegion();
     }
 }
