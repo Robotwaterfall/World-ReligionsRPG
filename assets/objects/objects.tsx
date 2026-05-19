@@ -28,6 +28,7 @@
  <tile id="4">
   <properties>
    <property name="atlasAsset" value="OBJECTS"/>
+   <property name="controller" type="bool" value="true"/>
   </properties>
   <image source="player/idle_down_00.png" width="32" height="32"/>
  </tile>

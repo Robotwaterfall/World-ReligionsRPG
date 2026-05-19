@@ -3,6 +3,8 @@ package io.github.worldreligionsrpg;
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.graphics.FPSLogger;
@@ -33,12 +35,15 @@ public class Main extends Game {
     private AssetService assetService;
     private GLProfiler glProfiler;
     private FPSLogger fpsLogger;
+    private InputMultiplexer inputMultiplexer;
 
     private final Map<Class<? extends Screen>, Screen> screenCache = new HashMap<>();
 
     @Override
     public void create() {
         Gdx.app.setLogLevel(Application.LOG_DEBUG);
+        this.inputMultiplexer = new InputMultiplexer();
+        Gdx.input.setInputProcessor(inputMultiplexer);
 
         this.batch = new SpriteBatch();
         this.camera = new OrthographicCamera();
@@ -53,12 +58,12 @@ public class Main extends Game {
     }
 
     @Override
-    public void resize(int width, int height){
+    public void resize(int width, int height) {
         viewport.update(width, height, true);
         super.resize(width, height);
     }
 
-    public void addScreen(Screen screen){
+    public void addScreen(Screen screen) {
         screenCache.put(screen.getClass(), screen);
     }
 
@@ -66,19 +71,20 @@ public class Main extends Game {
         screenCache.remove(screen.getClass());
     }
 
-    public void setScreen(Class<? extends Screen> screenClass){
+    public void setScreen(Class<? extends Screen> screenClass) {
         Screen screen = screenCache.get(screenClass);
-        if(screen == null){
-            throw new GdxRuntimeException("No Screen With Class" + screenClass + "Found In The Screen Cache");
+        if (screen == null) {
+            throw new GdxRuntimeException(
+                    "No Screen With Class" + screenClass + "Found In The Screen Cache");
         }
         super.setScreen(screen);
     }
 
     @Override
-    public void render(){
+    public void render() {
         glProfiler.reset();
 
-        Gdx.gl.glClearColor(0f,0f,0f,1f);
+        Gdx.gl.glClearColor(0f, 0f, 0f, 1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         super.render();
@@ -88,7 +94,7 @@ public class Main extends Game {
     }
 
     @Override
-    public void dispose(){
+    public void dispose() {
         screenCache.values().forEach(Screen::dispose);
         screenCache.clear();
 
@@ -102,15 +108,25 @@ public class Main extends Game {
         return assetService;
     }
 
-    public Batch getBatch(){
+    public Batch getBatch() {
         return batch;
     }
 
-    public Viewport getViewport(){
+    public Viewport getViewport() {
         return viewport;
     }
 
-    public OrthographicCamera getCamera(){
+    public OrthographicCamera getCamera() {
         return camera;
+    }
+
+    public void setInputProcessor(InputProcessor... processers) {
+        inputMultiplexer.clear();
+        if (processers == null)
+            return;
+
+        for (InputProcessor processor : processers) {
+            inputMultiplexer.addProcessor(processor);
+        }
     }
 }

@@ -13,42 +13,75 @@ import io.github.worldreligionsrpg.asset.AssetService;
 import io.github.worldreligionsrpg.asset.AtlasAsset;
 import io.github.worldreligionsrpg.component.Graphic;
 import io.github.worldreligionsrpg.component.Transform;
-
+import io.github.worldreligionsrpg.input.Controller;
 import static io.github.worldreligionsrpg.Constants.WorldConstants.UNIT_SCALE;
 
 public class TiledAshleyConfigurator {
     private final Engine engine;
     private final AssetService assetService;
 
-    public TiledAshleyConfigurator(Engine engine, AssetService assetService){
+    public TiledAshleyConfigurator(Engine engine, AssetService assetService) {
         this.engine = engine;
         this.assetService = assetService;
 
     }
 
-    public void onLoadObject(TiledMapTileMapObject tileMapObject){
+    public void onLoadObject(TiledMapTileMapObject tileMapObject) {
         Entity entity = this.engine.createEntity();
         TiledMapTile tile = tileMapObject.getTile();
         TextureRegion textureRegion = getTextureRegion(tile);
         int z = tile.getProperties().get("z", 1, Integer.class);
 
         entity.add(new Graphic(Color.WHITE.cpy(), textureRegion));
-        addEntityTransform(
-            tileMapObject.getX(), tileMapObject.getY(), z,
-            textureRegion.getRegionWidth(), textureRegion.getRegionHeight(),
-            tileMapObject.getScaleX(), tileMapObject.getScaleY(),
-            entity);
+        addEntityTransform(tileMapObject.getX(), tileMapObject.getY(), z,
+                textureRegion.getRegionWidth(), textureRegion.getRegionHeight(),
+                tileMapObject.getScaleX(), tileMapObject.getScaleY(), entity);
+        addEntityController(tileMapObject, tile, entity);
 
+        addEntityMove(tileMapObject, tile, entity);
 
         this.engine.addEntity(entity);
     }
 
-    private static void addEntityTransform(
-        float x, float y, int z,
-        float w, float h,
-        float scaleX, float scaleY,
-        Entity entity
-    ) {
+    private void addEntityMove(
+            com.badlogic.gdx.maps.tiled.objects.TiledMapTileMapObject tileMapObject,
+            TiledMapTile tile, Entity entity) {
+        // Prefer object-level property, fall back to tile-level
+        float speed = 0f;
+        if (tileMapObject != null) {
+            speed = tileMapObject.getProperties().get("speed", 0f, Float.class);
+        }
+        if (speed == 0f && tile != null) {
+            speed = tile.getProperties().get("speed", 0f, Float.class);
+        }
+
+        if (speed == 0f) {
+            return;
+        }
+
+        entity.add(new io.github.worldreligionsrpg.component.Move(speed));
+    }
+
+    public void addEntityController(TiledMapTileMapObject tileMapObject, TiledMapTile tile,
+            Entity entity) {
+        // Check object-level property first, then tile-level
+        boolean controller = false;
+        if (tileMapObject != null) {
+            controller = tileMapObject.getProperties().get("controller", false, Boolean.class);
+        }
+        if (!controller && tile != null) {
+            controller = tile.getProperties().get("controller", false, Boolean.class);
+        }
+
+        if (!controller) {
+            return;
+        }
+
+        entity.add(new Controller());
+    }
+
+    private static void addEntityTransform(float x, float y, int z, float w, float h, float scaleX,
+            float scaleY, Entity entity) {
         Vector2 position = new Vector2(x, y);
         Vector2 size = new Vector2(w, h);
         Vector2 scaling = new Vector2(scaleX, scaleY);
@@ -60,18 +93,20 @@ public class TiledAshleyConfigurator {
     }
 
 
-    private TextureRegion getTextureRegion(TiledMapTile tile){
-        String atlasAssetStr = tile.getProperties().get("atlasAsset", AtlasAsset.OBJECTS.name(), String.class);
+    private TextureRegion getTextureRegion(TiledMapTile tile) {
+        String atlasAssetStr =
+                tile.getProperties().get("atlasAsset", AtlasAsset.OBJECTS.name(), String.class);
         AtlasAsset atlasAsset = AtlasAsset.valueOf(atlasAssetStr);
         TextureAtlas textureAtlas = this.assetService.get(atlasAsset);
-        FileTextureData textureData = (FileTextureData) tile.getTextureRegion().getTexture().getTextureData();
+        FileTextureData textureData =
+                (FileTextureData) tile.getTextureRegion().getTexture().getTextureData();
         String atlasKey = textureData.getFileHandle().nameWithoutExtension();
         TextureAtlas.AtlasRegion region = textureAtlas.findRegion(atlasKey + "/" + atlasKey);
-        if(region != null){
+        if (region != null) {
             return region;
         }
 
-        //Otherwise region wasn't found so render at least something
+        // Otherwise region wasn't found so render at least something
         return tile.getTextureRegion();
     }
 }

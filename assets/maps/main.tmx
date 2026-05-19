@@ -18,7 +18,11 @@
   <object id="3" name="Dummy" gid="193" x="102.5" y="200.5" width="32" height="32"/>
   <object id="4" name="Dummy" gid="193" x="102" y="130" width="32" height="32"/>
   <object id="5" name="Dummy" gid="193" x="101.5" y="167.5" width="32" height="32"/>
-  <object id="6" name="Player" gid="197" x="260" y="195" width="32" height="32"/>
+  <object id="6" name="Player" gid="197" x="110.506" y="227.383" width="32" height="32">
+   <properties>
+    <property name="speed" type="float" value="4"/>
+   </properties>
+  </object>
   <object id="13" gid="196" x="135.5" y="252" width="41" height="63"/>
   <object id="14" gid="196" x="76" y="257.5" width="41" height="63"/>
   <object id="15" gid="196" x="344" y="67.5" width="41" height="63"/>
