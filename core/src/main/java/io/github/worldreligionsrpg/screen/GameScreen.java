@@ -15,6 +15,8 @@ import io.github.worldreligionsrpg.input.GameControllerState;
 import io.github.worldreligionsrpg.input.KeyboardController;
 import io.github.worldreligionsrpg.system.AnimationSystem;
 import io.github.worldreligionsrpg.system.ControllerSystem;
+import io.github.worldreligionsrpg.system.FacingSystem;
+import io.github.worldreligionsrpg.system.FsmSystem;
 import io.github.worldreligionsrpg.system.MoveSystem;
 import io.github.worldreligionsrpg.system.RenderSystem;
 import io.github.worldreligionsrpg.tiled.TiledAshleyConfigurator;
@@ -38,6 +40,8 @@ public class GameScreen extends ScreenAdapter {
 
         this.engine.addSystem(new ControllerSystem());
         this.engine.addSystem(new MoveSystem());
+        this.engine.addSystem(new FsmSystem());
+        this.engine.addSystem(new FacingSystem());
         this.engine.addSystem(new AnimationSystem(game.getAssetService()));
         this.engine
                 .addSystem(new RenderSystem(game.getBatch(), game.getViewport(), game.getCamera()));

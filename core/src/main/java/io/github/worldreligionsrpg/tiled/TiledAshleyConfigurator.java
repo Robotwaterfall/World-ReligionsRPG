@@ -14,6 +14,7 @@ import io.github.worldreligionsrpg.asset.AssetService;
 import io.github.worldreligionsrpg.asset.AtlasAsset;
 import io.github.worldreligionsrpg.component.Animation2D;
 import io.github.worldreligionsrpg.component.Facing;
+import io.github.worldreligionsrpg.component.Fsm;
 import io.github.worldreligionsrpg.component.Graphic;
 import io.github.worldreligionsrpg.component.Transform;
 import io.github.worldreligionsrpg.component.Animation2D.AnimationType;
@@ -47,6 +48,7 @@ public class TiledAshleyConfigurator {
 
         addEntityAnimation(tile, entity);
         entity.add(new Facing(Facing.FacingDirection.DOWN));
+        entity.add(new Fsm(entity));
 
         this.engine.addEntity(entity);
     }
